@@ -12,63 +12,72 @@ class DetailedPage extends StatefulWidget {
 
 class _DetailedPageState extends State<DetailedPage> {
   int _selectednum = 0;
+  bool isFavorite = false ;
+  List favoriteList = [];
+  // final TextEditingController _numcontroler = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          //الصورة
-          Container(
-            width: double.maxFinite,
-            height: 370,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage("${widget.dets.image}"),
-                fit: BoxFit.cover,
+      body: Container(
+        width: double.maxFinite,
+        height: double.maxFinite,
+        child: Stack(
+          
+          children: [
+            //الصورة
+            Positioned(
+              left: 0,
+              right: 0,
+              child: Container(
+                width: double.maxFinite,
+                height: 350,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage("${widget.dets.image}"),
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ),
             ),
-          ),
-          // زر العودة
-          Positioned(
-            top: 40,
-            left: 20,
-            child: GestureDetector(
-              onTap: () {
-                Navigator.pop(context);
-              },
+            // زر العودة
+            Positioned(
+              top: 40,
+              left: 20,
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Icon(
+                    Icons.arrow_back,
+                    color: Colors.deepPurple,
+                  ),
+                ),
+              ),
+            ),
+        
+            // المعلومات
+            Positioned(
+              top: 320,
               child: Container(
-                width: 40,
-                height: 40,
+                padding: EdgeInsets.only(left: 20, right: 20 , top: 30),
+                width: MediaQuery.of(context).size.width,
+                height: 550,
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(30),
+                    topRight: Radius.circular(30),
+                  ),
                 ),
-                child: const Icon(
-                  Icons.arrow_back,
-                  color: Colors.deepPurple,
-                ),
-              ),
-            ),
-          ),
-
-          // المعلومات
-          Positioned(
-            top: 330,
-            child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: 500,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(35),
-                  topRight: Radius.circular(35),
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.only(right: 20 , left: 20 , top: 20 , bottom: 0),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     //الاسم و السعر
                     Row(
@@ -76,7 +85,7 @@ class _DetailedPageState extends State<DetailedPage> {
                       children: [
                         BoldStyle(text: "${widget.dets.name}"),
                         BoldColordStyle(
-                          text: "${widget.dets.price}",
+                          text: "${widget.dets.price}\$",
                           color: Colors.deepPurple,
                         ),
                       ],
@@ -144,6 +153,11 @@ class _DetailedPageState extends State<DetailedPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              isFavorite = !isFavorite;
+                            });
+                          },
                           child: Container(
                             width: 70,
                             height: 70,
@@ -154,7 +168,7 @@ class _DetailedPageState extends State<DetailedPage> {
                               ),
                             ),
                             child: Icon(
-                              Icons.favorite_border,
+                              isFavorite? Icons.favorite:Icons.favorite_border,
                               size: 35,
                               color: Colors.deepPurple,
                             ),
@@ -165,16 +179,22 @@ class _DetailedPageState extends State<DetailedPage> {
                           onPressed: () {
                             showDialog(context: context, builder: (context){
                               return AlertDialog(
-                                title: Text("Book Information"),
-                                content: Column(
-                                  children: [
-                                    Text("mountain: ${widget.dets.name}"),
-                                    Text("number of people: ${5}"),
-                                    Text("total price: ${widget.dets.price * 5}"),
-                                  ],
+                                title: BoldStyle(text: "Book Information"),
+                                content: Container(
+                                  width: 250,
+                                  height: 150,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      MidStyle(text: "mountain: ${widget.dets.name}"),
+                                      MidStyle(text: "number of people: ${_selectednum+1}"),
+                                      MidStyle(text: "total price: ${widget.dets.price * (_selectednum+1)}\$"),
+                                    ],
+                                  ),
                                 ),
                                 actions: [
-                                  TextButton(onPressed: (){}, child: Text("OK")),
+                                  TextButton(onPressed: (){Navigator.of(context).pop();}, child: Text("OK")),
+                                  TextButton(onPressed: (){Navigator.of(context).pop();}, child: Text("Cancel")),
                                   
                                 ],
                               );
@@ -198,8 +218,8 @@ class _DetailedPageState extends State<DetailedPage> {
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -64,7 +64,7 @@ class Placesgrid extends StatelessWidget {
         ),
         Padding(
           padding: const EdgeInsets.only(left: 12 ),
-          child: Text(dets[i].price ,style: TextStyle(fontSize: 18 , fontWeight: FontWeight.bold , color: Colors.grey),),
+          child: Text("${dets[i].price}\$" ,style: TextStyle(fontSize: 18 , fontWeight: FontWeight.bold , color: Colors.grey),),
         ),
                 ],
               ),
