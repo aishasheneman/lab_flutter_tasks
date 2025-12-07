@@ -16,7 +16,7 @@ class Indexpage extends StatefulWidget {
 
 class _IndexpageState extends State<Indexpage> {
   int _indexPage = 0;
-  List <Widget> pages = [
+  List <Widget> get pages => [
     Homepage(),
     FavoritePage(),
     AccountPage()

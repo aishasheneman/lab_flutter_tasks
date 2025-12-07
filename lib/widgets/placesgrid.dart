@@ -26,7 +26,7 @@ class Placesgrid extends StatelessWidget {
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => DetailedPage(dets: dets[i]),
+                  builder: (context) => DetailedPage(dets: dets[i] , mountIndex:i ,),
                 ),
               );
             },

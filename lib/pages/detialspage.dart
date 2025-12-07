@@ -1,10 +1,12 @@
 import 'package:end_project/models/details.dart';
+import 'package:end_project/models/favorites_data.dart';
 import 'package:end_project/widgets/texsts_style.dart';
 import 'package:flutter/material.dart';
 
 class DetailedPage extends StatefulWidget {
-  const DetailedPage({super.key, required this.dets});
+  const DetailedPage({super.key, required this.dets, required this.mountIndex});
   final Details dets;
+  final int mountIndex;
 
   @override
   State<DetailedPage> createState() => _DetailedPageState();
@@ -12,9 +14,14 @@ class DetailedPage extends StatefulWidget {
 
 class _DetailedPageState extends State<DetailedPage> {
   int _selectednum = 0;
-  bool isFavorite = false ;
-  List favoriteList = [];
-  // final TextEditingController _numcontroler = TextEditingController();
+  bool isFavorite = false;
+  // List favoriteList = [];
+  @override
+void initState() {
+  super.initState();
+  isFavorite = FavoritesData.favoriteNames.contains(widget.dets.name);
+
+}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,7 +29,6 @@ class _DetailedPageState extends State<DetailedPage> {
         width: double.maxFinite,
         height: double.maxFinite,
         child: Stack(
-          
           children: [
             //الصورة
             Positioned(
@@ -54,19 +60,16 @@ class _DetailedPageState extends State<DetailedPage> {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  child: const Icon(
-                    Icons.arrow_back,
-                    color: Colors.deepPurple,
-                  ),
+                  child: const Icon(Icons.arrow_back, color: Colors.deepPurple),
                 ),
               ),
             ),
-        
+
             // المعلومات
             Positioned(
               top: 320,
               child: Container(
-                padding: EdgeInsets.only(left: 20, right: 20 , top: 30),
+                padding: EdgeInsets.only(left: 20, right: 20, top: 30),
                 width: MediaQuery.of(context).size.width,
                 height: 550,
                 decoration: BoxDecoration(
@@ -77,7 +80,7 @@ class _DetailedPageState extends State<DetailedPage> {
                   ),
                 ),
                 child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     //الاسم و السعر
                     Row(
@@ -98,23 +101,30 @@ class _DetailedPageState extends State<DetailedPage> {
                         NormalStyle(text: "${widget.dets.location}"),
                       ],
                     ),
-                    SizedBox(height: 10,),
+                    SizedBox(height: 10),
                     // التقييم
-                    Row(children: List.generate(5, (index){
-                        return Icon(index+1 <= widget.dets.rating ? Icons.star : Icons.star_border , color: Colors.deepPurple,);
-                    }),),
+                    Row(
+                      children: List.generate(5, (index) {
+                        return Icon(
+                          index + 1 <= widget.dets.rating
+                              ? Icons.star
+                              : Icons.star_border,
+                          color: Colors.deepPurple,
+                        );
+                      }),
+                    ),
                     SizedBox(height: 10),
                     //عدد الأشخاص
                     BoldStyle(text: "People"),
                     NormalStyle(text: "Number of people in your group"),
                     SizedBox(height: 15),
                     Row(
-                      children: List.generate(5,(i) {
+                      children: List.generate(5, (i) {
                         bool isSelected = _selectednum == i;
                         return GestureDetector(
                           onTap: () {
                             setState(() {
-                              _selectednum= i;
+                              _selectednum = i;
                             });
                           },
                           child: Container(
@@ -122,14 +132,18 @@ class _DetailedPageState extends State<DetailedPage> {
                             height: 50,
                             margin: EdgeInsets.symmetric(horizontal: 5),
                             decoration: BoxDecoration(
-                              color:isSelected? Colors.black:Colors.grey[300],
+                              color: isSelected
+                                  ? Colors.black
+                                  : Colors.grey[300],
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Center(
                               child: Text(
                                 "${i + 1}",
                                 style: TextStyle(
-                                  color: isSelected ? Colors.white:Colors.black,
+                                  color: isSelected
+                                      ? Colors.white
+                                      : Colors.black,
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -137,10 +151,9 @@ class _DetailedPageState extends State<DetailedPage> {
                             ),
                           ),
                         );
-                      } 
-                      ),
+                      }),
                     ),
-                    // الوصف 
+                    // الوصف
                     SizedBox(height: 15),
                     BoldStyle(text: "Descrption"),
                     Container(
@@ -154,10 +167,18 @@ class _DetailedPageState extends State<DetailedPage> {
                       children: [
                         GestureDetector(
                           onTap: () {
-                            setState(() {
-                              isFavorite = !isFavorite;
-                            });
-                          },
+    setState(() {
+      isFavorite = !isFavorite;
+
+      if (isFavorite) {
+        if (!FavoritesData.favoriteNames.contains(widget.dets.name)) {
+          FavoritesData.favoriteNames.add(widget.dets.name);
+        }
+      } else {
+        FavoritesData.favoriteNames.remove(widget.dets.name);
+      }
+    });
+  },
                           child: Container(
                             width: 70,
                             height: 70,
@@ -168,7 +189,9 @@ class _DetailedPageState extends State<DetailedPage> {
                               ),
                             ),
                             child: Icon(
-                              isFavorite? Icons.favorite:Icons.favorite_border,
+                              isFavorite
+                                  ? Icons.favorite
+                                  : Icons.favorite_border,
                               size: 35,
                               color: Colors.deepPurple,
                             ),
@@ -177,28 +200,49 @@ class _DetailedPageState extends State<DetailedPage> {
                         // زر الحجز
                         MaterialButton(
                           onPressed: () {
-                            showDialog(context: context, builder: (context){
-                              return AlertDialog(
-                                title: BoldStyle(text: "Book Information"),
-                                content: Container(
-                                  width: 250,
-                                  height: 150,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      MidStyle(text: "mountain: ${widget.dets.name}"),
-                                      MidStyle(text: "number of people: ${_selectednum+1}"),
-                                      MidStyle(text: "total price: ${widget.dets.price * (_selectednum+1)}\$"),
-                                    ],
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: BoldStyle(text: "Book Information"),
+                                  content: Container(
+                                    width: 250,
+                                    height: 150,
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        MidStyle(
+                                          text: "mountain: ${widget.dets.name}",
+                                        ),
+                                        MidStyle(
+                                          text:
+                                              "number of people: ${_selectednum + 1}",
+                                        ),
+                                        MidStyle(
+                                          text:
+                                              "total price: ${widget.dets.price * (_selectednum + 1)}\$",
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                actions: [
-                                  TextButton(onPressed: (){Navigator.of(context).pop();}, child: Text("OK")),
-                                  TextButton(onPressed: (){Navigator.of(context).pop();}, child: Text("Cancel")),
-                                  
-                                ],
-                              );
-                            });
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text("OK"),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text("Cancel"),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
                           },
                           color: Colors.deepPurple,
                           padding: EdgeInsets.only(
